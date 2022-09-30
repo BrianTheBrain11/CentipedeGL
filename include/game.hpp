@@ -53,7 +53,9 @@ private:
 	//bool CheckCollision(BallObject& one, GameObject& two);
 
 	Direction VectorDirection(glm::vec2 target);
-	bool CheckCollision(BulletObject& one, GameObject& two);
+	bool CheckCollision(GameObject& one, GameObject& two);
+	bool CheckCollision(GameObject& one, glm::vec2& twoPos, glm::vec2& twoSize);
+	bool CheckCollision(glm::vec2& onePos, glm::vec2& oneSize, GameObject& two);
 };
 
 #endif

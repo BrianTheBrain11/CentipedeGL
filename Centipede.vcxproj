@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -136,6 +136,7 @@
     <ClCompile Include="include\glm\detail\glm.cpp" />
     <ClCompile Include="src\ball_object.cpp" />
     <ClCompile Include="src\bullet_object.cpp" />
+    <ClCompile Include="src\centipede_object.cpp" />
     <ClCompile Include="src\game_object.cpp" />
     <ClCompile Include="src\game_level.cpp" />
     <ClCompile Include="src\player_object.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\centipede_object.hpp" />
     <ClInclude Include="include\ball_object.hpp" />
     <ClInclude Include="include\bullet_object.hpp" />
     <ClInclude Include="include\game.hpp" />

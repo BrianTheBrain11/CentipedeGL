@@ -16,7 +16,7 @@ class GameObject
 {
 public:
 
-	std::vector<Texture2D>* textureMap;
+	std::vector<Texture2D> textureMap;
 	std::string Name;
 	// object state
 	glm::vec2 Position, Size, Velocity;
@@ -25,6 +25,7 @@ public:
 	bool IsSolid;
 	bool Destroyed;
 	int AnimationState;
+	Texture2D Sprite;
 
 	// current render state
 
@@ -35,6 +36,9 @@ public:
 	
 	// draw sprite
 	virtual void Draw(SpriteRenderer& renderer);
+
+private:
+	bool isMultiFrame;
 };
 
 #endif

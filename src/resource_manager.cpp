@@ -36,7 +36,6 @@ void ResourceManager::LoadTexturesFromSpriteMap(const char* file, bool alpha, st
 {
     std::vector<Texture2D> textureMap;
     loadTexturesFromFile(file, alpha, height_, width_, &textureMap);
-    std::cout << "size of texture map " << textureMap.size() << std::endl;
     for (int i = 0; i < textureMap.size(); i++)
     {
         std::string textureName = name + "_";
@@ -46,6 +45,7 @@ void ResourceManager::LoadTexturesFromSpriteMap(const char* file, bool alpha, st
         std::cout << textureName << std::endl;
     }
     TextureMaps[name] = textureMap;
+    std::cout << "added new map named " << name << " with size " << textureMap.size() << std::endl;
 }
 
 Texture2D ResourceManager::GetTexture(std::string name)

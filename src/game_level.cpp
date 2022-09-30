@@ -79,7 +79,6 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData,
 
 void GameLevel::Draw(SpriteRenderer& renderer)
 {
-    std::cout << this->Mushrooms.size() << " size of mushrooms" << std::endl;
     for (GameObject& tile : this->Mushrooms)
         if (!tile.Destroyed)
             tile.Draw(renderer);

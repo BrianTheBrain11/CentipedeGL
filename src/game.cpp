@@ -20,11 +20,11 @@ SpriteRenderer* Renderer;
 
 const glm::vec2 PLAYER_SIZE(16.0f, 16.0f);
 const float PLAYER_VELOCITY(500.0f);
-//GameObject* Player;
+GameObject* Player;
 
-/*const glm::vec2 BULLET_SIZE(8.0f, 16.0f);
+const glm::vec2 BULLET_SIZE(8.0f, 16.0f);
 const glm::vec2 BULLET_VELOCITY(0.0f, 4000.0f);
-BulletObject* Bullet;*/
+BulletObject* Bullet;
 
 void Game::Init()
 {
@@ -43,7 +43,7 @@ void Game::Init()
 	Renderer = new SpriteRenderer(shader);
 	
 	// load textures
-	//ResourceManager::LoadTexture("sprites/background.jpg", false, "background");
+	ResourceManager::LoadTexture("sprites/background.jpg", false, "background");
 	ResourceManager::LoadTexture("sprites/block.png", false, "block");
 	//ResourceManager::LoadTexture("sprites/block_solid.png", false, "block_solid");
 
@@ -66,26 +66,25 @@ void Game::Init()
 	// player init
 	glm::vec2 playerPos = glm::vec2(this->Width / 2.0f - PLAYER_SIZE.x / 2.0f, this->Height - PLAYER_SIZE.y);
 	Texture2D playerTexture = ResourceManager::GetTexture("player");
-	//Player = new GameObject("player", playerPos, PLAYER_SIZE, playerTexture);
+	Player = new GameObject("player", playerPos, PLAYER_SIZE, playerTexture);
 
 }
 
 void Game::Update(float dt)
 {
-	//Ball->Move(dt, this->Width);
-	/*if (Bullet != nullptr)
+	if (Bullet != nullptr)
 		Bullet->Move(dt, this->Width);
 
 	this->DoCollisions();
 
 	if (Bullet != nullptr)
 	{
-		 (Bullet->Position.y >= this->Height) // did ball reach bottom edge?
+		if (Bullet->Position.y >= this->Height) // did ball reach bottom edge?
 		{
 			this->ResetLevel();
 			this->ResetPlayer();
 		}
-	}*/
+	}
 }
 
 void Game::ProcessInput(float dt)
@@ -93,27 +92,55 @@ void Game::ProcessInput(float dt)
 	if (this->State == GAME_ACTIVE)
 	{
 		float velocity = PLAYER_VELOCITY * dt;
-		// move playerboard
-		/*if (this->Keys[GLFW_KEY_A])
+		//move playerboard
+		glm::vec2 newPos = Player->Position;
+		glm::vec2 initPos = Player->Position;
+
+		if (this->Keys[GLFW_KEY_A])
 		{
-			if (Player->Position.x >= 0.0f)
+			if (newPos.x >= 0.0f)
 			{
-				Player->Position.x -= velocity;
+				newPos.x -= velocity;
 			}
 		}
 		if (this->Keys[GLFW_KEY_D])
 		{
-			if (Player->Position.x <= this->Width - Player->Size.x)
+			if (newPos.x <= this->Width - Player->Size.x)
 			{
-				Player->Position.x += velocity;
+				newPos.x += velocity;
 			}
 		}
+		if (this->Keys[GLFW_KEY_W]) {
+			if (newPos.y >= 0.0f)
+			{
+				newPos.y -= velocity;
+			}
+		}
+		if (this->Keys[GLFW_KEY_S]) {
+			if (newPos.y <= this->Height - Player->Size.y)
+			{
+				newPos.y += velocity;
+			}
+		}
+		Player->Position = newPos;
+
+		for (int i = 0; i < this->Level.Mushrooms.size(); i++)
+		{
+			GameObject* mushroom = &this->Level.Mushrooms[i];
+			if (CheckCollision(*Player, *mushroom))
+			{
+				newPos = initPos;
+			}
+		}
+
+		Player->Position = newPos;	
+
 		if (this->Keys[GLFW_KEY_SPACE] == 1 && Bullet == nullptr)
 		{
 			glm::vec2 bulletPos = Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - BULLET_SIZE.x, -BULLET_SIZE.x * 2.0f);
 			Texture2D bulletTexture = ResourceManager::GetTexture("bullet");
 			Bullet = new BulletObject("bullet", bulletPos, glm::vec2(8, 16), BULLET_VELOCITY, bulletTexture);
-		}*/
+		}
 	}
 }
 
@@ -127,14 +154,13 @@ void Game::Render()
 
 		// draw level
 		Level.Draw(*Renderer);
-		//Player->Draw(*Renderer);
-		//Ball->Draw(*Renderer);
-		/*if (Bullet != nullptr)
-			Bullet->Draw(*Renderer);*/
+		Player->Draw(*Renderer);
+		if (Bullet != nullptr)
+			Bullet->Draw(*Renderer);
 	}
 }
 
-bool Game::CheckCollision(BulletObject& one, GameObject& two)
+bool Game::CheckCollision(GameObject& one, GameObject& two)
 {
 	bool collisionX = one.Position.x + one.Size.x >= two.Position.x && two.Position.x + two.Size.x >= one.Position.x;
 	bool collisionY = one.Position.y + one.Size.y >= two.Position.y && two.Position.y + two.Size.y >= one.Position.y;
@@ -142,48 +168,36 @@ bool Game::CheckCollision(BulletObject& one, GameObject& two)
 	return collisionX && collisionY;
 }
 
-/*Collision Game::CheckCollision(BulletObject& one, GameObject& two)
+bool Game::CheckCollision(GameObject& one, glm::vec2& twoPos, glm::vec2& twoSize)
 {
+	bool collisionX = one.Position.x + one.Size.x >= twoPos.x && twoPos.x + twoSize.x >= one.Position.x;
+	bool collisionY = one.Position.y + one.Size.y >= twoPos.y && twoPos.y + twoSize.y >= one.Position.y;
 
-	if (GameObject)
+	return collisionX && collisionY;
+}
 
-	
-	// get center point circle first 
-	glm::vec2 center(one.Position + one.Size.x);
-	// calculate AABB info (center, half-extents)
-	glm::vec2 aabb_half_extents(two.Size.x / 2.0f, two.Size.y / 2.0f);
-	glm::vec2 aabb_center(
-		two.Position.x + aabb_half_extents.x,
-		two.Position.y + aabb_half_extents.y
-	);
-	// get difference vector between both centers
-	glm::vec2 difference = center - aabb_center;
-	glm::vec2 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
-	// add clamped value to AABB_center and we get the value of box closest to circle
-	glm::vec2 closest = aabb_center + clamped;
-	// retrieve vector between center circle and closest point AABB and check if length <= radius
-	difference = closest - center;
+bool Game::CheckCollision(glm::vec2& onePos, glm::vec2& oneSize, GameObject& two)
+{
+	bool collisionX = onePos.x + oneSize.x >= two.Position.x && two.Position.x + two.Size.x >= onePos.x;
+	bool collisionY = onePos.y + oneSize.y >= two.Position.y && two.Position.y + two.Size.y >= onePos.y;
 
-	if (glm::length(difference) <= one.Size.x)
-		return std::make_tuple(true, VectorDirection(difference), difference);
-	else
-		return std::make_tuple(false, UP, glm::vec2(0.0f, 0.0f));
-}*/
+	return collisionX && collisionY;
+}
 
 void Game::DoCollisions()
 {
-	/*if (Bullet != nullptr)
+	if (Bullet != nullptr)
 	{
-		for (int i = 0; i < this->Levels[this->Level].Mushrooms.size(); i++)
+		for (int i = 0; i < this->Level.Mushrooms.size(); i++)
 		{
-			GameObject* mushroom = &this->Levels[this->Level].Mushrooms[i];
+			GameObject* mushroom = &this->Level.Mushrooms[i];
 			if (CheckCollision(*Bullet, *mushroom))
 			{
 				mushroom->AnimationState++;
-				if (mushroom->AnimationState > mushroom->textureMap->size() - 1)
+				if (mushroom->AnimationState > mushroom->textureMap.size() - 1)
 				{
 					//delete mushroom;
-					this->Levels[this->Level].Mushrooms.erase(this->Levels[this->Level].Mushrooms.begin() + i);
+					this->Level.Mushrooms.erase(this->Level.Mushrooms.begin() + i);
 				}
 
 				delete Bullet;
@@ -198,7 +212,7 @@ void Game::DoCollisions()
 			Bullet = nullptr;
 			return;
 		}
-	}*/
+	}
 
 	
 

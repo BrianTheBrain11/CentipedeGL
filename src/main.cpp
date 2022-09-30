@@ -10,8 +10,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // settings
-const unsigned int SCR_WIDTH = 640;
-const unsigned int SCR_HEIGHT = 480;
+const unsigned int SCR_WIDTH = 480;
+const unsigned int SCR_HEIGHT = 640;
 
 Game Breakout(SCR_WIDTH, SCR_HEIGHT);
 
