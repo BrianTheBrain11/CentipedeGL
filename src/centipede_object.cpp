@@ -1,51 +1,13 @@
 #include "centipede_object.hpp"
+#include <iostream>
 
-CentipedeObject::CentipedeObject(CentipedeObject* previous, CentipedeObject* next) : Previous(previous), Next(next)
+CentipedeObject::CentipedeObject(std::string name, glm::vec2 pos, glm::vec2 size, int animationState, std::vector<Texture2D> textureMap, glm::vec3 color, glm::vec2 velocity) : 
+	GameObject(name, pos, size, animationState, textureMap, color, velocity)
 {
 	this->head = false;
-	if (previous == nullptr)
-	{
-		this->head = true;
-	}
-}
-
-CentipedeObject* CentipedeObject::Max()
-{
-	CentipedeObject* nextIt = this->Previous;
-	CentipedeObject* max = nullptr;
-	while (nextIt->Previous != nullptr)
-	{
-		max = nextIt->Previous;
-	}
-	return max;
-}
-
-CentipedeObject* CentipedeObject::Min()
-{
-	CentipedeObject* nextIt = this->Next;
-	CentipedeObject* min = nullptr;
-	while (nextIt->Next != nullptr)
-	{
-		min = nextIt->Next;
-	}
-	return min;
 }
 
 void CentipedeObject::Draw(SpriteRenderer& renderer)
 {
-	renderer.DrawSprite(this->textureMap[this->AnimationState], this->Position, this->Size, this->Rotation, this->Color);
-}
-
-void CentipedeObject::Tick()
-{
-	CentipedeObject* maxObj = this->Max();
-	CentipedeObject* minObj = this->Min();
-
-	maxObj->Next->Previous = nullptr;
-	maxObj->Previous = nullptr;
-	maxObj->Next = minObj;
-
-	minObj->Next = nullptr;
-
-	maxObj = this->Max();
+	renderer.DrawSprite(this->textureMap[0], this->Position, this->Size, this->Rotation, this->Color);
 }

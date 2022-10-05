@@ -57,6 +57,9 @@
     <ClCompile Include="src\bullet_object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\centipede_object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -950,6 +953,9 @@
     <ClInclude Include="include\bullet_object.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\centipede_object.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\sprite.vert" />
@@ -1371,9 +1377,6 @@
     <None Include="Piskel\Player.piskel" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="sprites\awesomeface.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="sprites\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
@@ -1386,28 +1389,13 @@
     <Image Include="sprites\Centipede_Body.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="sprites\paddle.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="sprites\Player.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="sprites\mushroom.bmp">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="sprites\Mushroom.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="sprites\Mushroom\Mushroom_1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="sprites\Mushroom\Mushroom_2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="sprites\Mushroom\Mushroom_3.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="sprites\Mushroom\Mushroom_4.png">
+    <Image Include="sprites\Bullet.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

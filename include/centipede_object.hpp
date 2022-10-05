@@ -7,15 +7,10 @@
 
 class CentipedeObject : public GameObject {
 public:
-	CentipedeObject(CentipedeObject* previous, CentipedeObject* next);
-	CentipedeObject* Previous;
-	CentipedeObject* Next;
-	CentipedeObject* Max();
-	CentipedeObject* Min();
-	void Tick();
-	void Draw(SpriteRenderer& renderer);
-private:
+	CentipedeObject(std::string name, glm::vec2 pos, glm::vec2 size, int animationState, std::vector<Texture2D> textureMap, glm::vec3 color, glm::vec2 velocity);
+
 	bool head;
+	void Draw(SpriteRenderer& renderer);
 };
 
 #endif

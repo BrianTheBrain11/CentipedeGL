@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -150,9 +150,9 @@
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\centipede_object.hpp" />
     <ClInclude Include="include\ball_object.hpp" />
     <ClInclude Include="include\bullet_object.hpp" />
+    <ClInclude Include="include\centipede_object.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\game_level.hpp" />
     <ClInclude Include="include\game_object.hpp" />
@@ -597,18 +597,12 @@
     <None Include="shaders\sprite.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="sprites\awesomeface.png" />
     <Image Include="sprites\background.jpg" />
     <Image Include="sprites\block.png" />
     <Image Include="sprites\block_solid.png" />
+    <Image Include="sprites\Bullet.png" />
     <Image Include="sprites\Centipede_Body.png" />
-    <Image Include="sprites\mushroom.bmp" />
     <Image Include="sprites\Mushroom.png" />
-    <Image Include="sprites\Mushroom\Mushroom_1.png" />
-    <Image Include="sprites\Mushroom\Mushroom_2.png" />
-    <Image Include="sprites\Mushroom\Mushroom_3.png" />
-    <Image Include="sprites\Mushroom\Mushroom_4.png" />
-    <Image Include="sprites\paddle.png" />
     <Image Include="sprites\Player.png" />
   </ItemGroup>
   <ItemGroup>

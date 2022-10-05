@@ -45,7 +45,6 @@ void Game::Init()
 	// load textures
 	ResourceManager::LoadTexture("sprites/background.jpg", false, "background");
 	ResourceManager::LoadTexture("sprites/block.png", false, "block");
-	//ResourceManager::LoadTexture("sprites/block_solid.png", false, "block_solid");
 
 	// load bullet texture
 	ResourceManager::LoadTexture("sprites/Bullet.png", true, "bullet");
@@ -57,7 +56,7 @@ void Game::Init()
 	ResourceManager::LoadTexture("sprites/Player.png", true, "player");
 
 	// load centipede textures
-
+	ResourceManager::LoadTexturesFromSpriteMap("sprites/Centipede_Body.png", true, "centipede_body", 16, 16);
 
 	// load starting level
 	this->Level.Load("levels/starting_level.lvl", this->Width, this->Height);
@@ -68,6 +67,22 @@ void Game::Init()
 	Texture2D playerTexture = ResourceManager::GetTexture("player");
 	Player = new GameObject("player", playerPos, PLAYER_SIZE, playerTexture);
 
+	CentipedeInit(5);
+}
+
+void Game::CentipedeInit(int bodyLength)
+{
+	std::vector<CentipedeObject> centipede;
+	std::vector<Texture2D> centipedeTextures = ResourceManager::GetTextures("centipede_body");
+	CentipedeObject prevBody("centipede_body", glm::vec2(240.0, 16.0), glm::vec2(16.0, 16.0), 0, centipedeTextures, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0));
+	std::cout << prevBody.textureMap.size() << " debug size" << std::endl;
+	centipede.push_back(prevBody);
+	for (int i = 1; i < bodyLength; i++)
+	{
+		CentipedeObject newBody = CentipedeObject("centipede_body", glm::vec2(240.0 + 16.0*i, 16.0), glm::vec2(16.0), 0, centipedeTextures, glm::vec3(1.0f), glm::vec3(0.0));
+		centipede.push_back(newBody);
+	}
+	Centipedes.push_back(centipede);
 }
 
 void Game::Update(float dt)
@@ -76,6 +91,7 @@ void Game::Update(float dt)
 		Bullet->Move(dt, this->Width);
 
 	this->DoCollisions();
+	//CentipedeObject::CentipedeTick(HeadObjects);
 
 	if (Bullet != nullptr)
 	{
@@ -144,19 +160,28 @@ void Game::ProcessInput(float dt)
 	}
 }
 
+glm::vec2 bodyPos = glm::vec2(16.0, 16.0);
+
 void Game::Render()
 {
 	if (this->State == GAME_ACTIVE) {
 
-		// draw background
-		Texture2D backgroundTexture = ResourceManager::GetTexture("background");
-		Renderer->DrawSprite(backgroundTexture, glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
+		// 60 fps limit
+		if (glfwGetTime() - lastTime >= (1 / 60))
+		{
+			// draw background
+			Texture2D backgroundTexture = ResourceManager::GetTexture("background");
+			Renderer->DrawSprite(backgroundTexture, glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
 
-		// draw level
-		Level.Draw(*Renderer);
-		Player->Draw(*Renderer);
-		if (Bullet != nullptr)
-			Bullet->Draw(*Renderer);
+			// draw level
+			CentipedeDraw(*Renderer);
+			Level.Draw(*Renderer);
+			Player->Draw(*Renderer);
+			if (Bullet != nullptr)
+				Bullet->Draw(*Renderer);
+
+			lastTime = glfwGetTime();
+		}
 	}
 }
 
@@ -264,6 +289,18 @@ void Game::ResetPlayer()
 {
 	// reset player/ball stats
 	/*Player->Size = PLAYER_SIZE;
+	/*Player->Size = PLAYER_SIZE;
 	Player->Position = glm::vec2(this->Width / 2.0f - PLAYER_SIZE.x / 2.0f, this->Height - PLAYER_SIZE.y);*/
 	//Bullet->Reset(Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - Bullet->Size.x, -(Bullet->Size.x * 2.0f)), glm::vec2(BULLET_VELOCITY));
+}
+
+void Game::CentipedeDraw(SpriteRenderer& renderer)
+{
+	for (auto& centipede : Centipedes)
+	{
+		for (auto& bodyObj : centipede)
+		{
+			bodyObj.Draw(renderer);
+		}
+	}
 }

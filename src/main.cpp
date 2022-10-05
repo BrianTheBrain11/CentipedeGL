@@ -13,7 +13,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 const unsigned int SCR_WIDTH = 480;
 const unsigned int SCR_HEIGHT = 640;
 
-Game Breakout(SCR_WIDTH, SCR_HEIGHT);
+Game Centipede(SCR_WIDTH, SCR_HEIGHT);
 
 int main()
 {
@@ -52,7 +52,7 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Breakout.Init();
+    Centipede.Init();
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -68,13 +68,13 @@ int main()
         glfwPollEvents();
 
         // user input
-        Breakout.ProcessInput(deltaTime);
+        Centipede.ProcessInput(deltaTime);
 
-        Breakout.Update(deltaTime);
+        Centipede.Update(deltaTime);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        Breakout.Render();
+        Centipede.Render();
 
         glfwSwapBuffers(window);
     }
@@ -96,14 +96,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            if (Breakout.Keys[key] == 0)
-                Breakout.Keys[key] = 1;
+            if (Centipede.Keys[key] == 0)
+                Centipede.Keys[key] = 1;
             else
-                Breakout.Keys[key] = 2;
+                Centipede.Keys[key] = 2;
         else if (action == GLFW_RELEASE)
-            Breakout.Keys[key] = 0;
+            Centipede.Keys[key] = 0;
 
-        std::cout << Breakout.Keys[key];
+        std::cout << Centipede.Keys[key];
     }
 }
 

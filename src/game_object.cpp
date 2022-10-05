@@ -12,7 +12,6 @@ GameObject::GameObject(std::string name, glm::vec2 pos, glm::vec2 size, Texture2
 GameObject::GameObject(std::string name, glm::vec2 pos, glm::vec2 size, int animationState, std::vector<Texture2D> textureMap, glm::vec3 color, glm::vec2 velocity) : Name(name), Position(pos), AnimationState(animationState),  Size(size), Velocity(velocity), Color(color), Rotation(0.0f), IsSolid(false), Destroyed(false), isMultiFrame(true)
 {
 	this->textureMap = textureMap;
-	std::cout << "internal map size" << this->textureMap.size() << std::endl;
 }
 
 

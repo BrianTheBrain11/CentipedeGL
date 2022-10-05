@@ -11,6 +11,7 @@
 #include "game_level.hpp"
 #include "game_object.hpp"
 #include "bullet_object.hpp"
+#include "centipede_object.hpp"
 
 enum GameState {
 	GAME_ACTIVE,
@@ -34,16 +35,19 @@ public:
 	GameLevel Level;
 	std::map<int, int> Keys;
 	unsigned int Width, Height;
-
+	double lastTime;
 	std::vector<GameLevel> Levels;
+	std::vector<std::vector<CentipedeObject>> Centipedes;
 
 	Game(unsigned int width, unsigned int height);
 	~Game();
 
 	void Init();
+	void CentipedeInit(int bodyLength);
 	void ProcessInput(float dt);
 	void Update(float dt);
 	void Render();
+	void CentipedeDraw(SpriteRenderer& renderer);
 	void DoCollisions();
 	void ResetLevel();
 	void ResetPlayer();
