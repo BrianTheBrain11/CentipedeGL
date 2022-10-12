@@ -67,7 +67,7 @@ int main()
         double currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
 
-        if (deltaTime >= 1.0 / 200.0)
+        if (deltaTime >= 1.0 / 60.0)
         {
             lastFrame = currentTime;
             glfwPollEvents();

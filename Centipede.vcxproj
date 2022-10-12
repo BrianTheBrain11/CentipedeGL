@@ -137,11 +137,11 @@
     <ClCompile Include="src\ball_object.cpp" />
     <ClCompile Include="src\bullet_object.cpp" />
     <ClCompile Include="src\centipede_object.cpp" />
+    <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_object.cpp" />
     <ClCompile Include="src\game_level.cpp" />
     <ClCompile Include="src\player_object.cpp" />
     <ClCompile Include="src\sprite_renderer.cpp" />
-    <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\resource_manager.cpp" />

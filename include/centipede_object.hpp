@@ -18,7 +18,8 @@ public:
 
 	bool head;
 	void Draw(SpriteRenderer& renderer);
-	Heading Course;
+	Heading CourseX;
+	Heading CourseY;
 	Heading Direction;
 	Heading LastDirection = Heading::EAST;
 	glm::vec2 LastTurnDownPosition;

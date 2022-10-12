@@ -25,6 +25,7 @@ GameObject* Player;
 const glm::vec2 BULLET_SIZE(8.0f, 16.0f);
 const glm::vec2 BULLET_VELOCITY(0.0f, 4000.0f);
 BulletObject* Bullet;
+glm::vec2 bodyPos = glm::vec2(16.0, 16.0);
 
 void Game::Init()
 {
@@ -76,14 +77,14 @@ void Game::CentipedeInit(int bodyLength)
 	std::vector<Texture2D> centipedeTextures = ResourceManager::GetTextures("centipede_body");
 	CentipedeObject prevBody("centipede_body", glm::vec2(240.0, 32.0), glm::vec2(16.0, 16.0), 0, centipedeTextures, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0));
 	prevBody.head = true;
-	prevBody.Course = Heading::EAST;
+	prevBody.CourseX = Heading::EAST;
 	std::cout << prevBody.textureMap.size() << " debug size" << std::endl;
 	centipede.push_back(prevBody);
 	for (int i = 1; i < bodyLength; i++)
 	{
 		CentipedeObject newBody = CentipedeObject("centipede_body", glm::vec2(240.0 + 16.0*i, 32.0), glm::vec2(16.0), 0, centipedeTextures, glm::vec3(1.0f), glm::vec3(0.0));
 		centipede.push_back(newBody);
-		newBody.Course = Heading::EAST;
+		newBody.CourseX = Heading::EAST;
 	}
 	Centipedes.push_back(centipede);
 }
@@ -95,7 +96,6 @@ void Game::Update(float dt)
 		Bullet->Move(dt, this->Width);
 
 	this->DoCollisions();
-	//CentipedeObject::CentipedeTick(HeadObjects);
 
 	if (Bullet != nullptr)
 	{
@@ -106,53 +106,6 @@ void Game::Update(float dt)
 		}
 	}
 
-}
-
-void Game::CentipedeTick()
-{
-	for (int i = 0; i < Centipedes.size(); i++)
-	{
-		std::vector<CentipedeObject>* centipede = &Centipedes[i];
-		CentipedeObject* lastObj = nullptr;
-		for (int j = 0; j < centipede->size(); j++)
-		{
-			CentipedeObject* bodyObj = &(*centipede)[j];
-
-			bodyObj->LastDirection = bodyObj->Direction;
-			bodyObj->Direction = bodyObj->Course;
-
-			glm::vec2 newPos = bodyObj->Position;
-			glm::vec2 initPos = bodyObj->Position;
-
-
-			if (bodyObj->LastTurnDownPosition.y >= bodyObj->Position.y -16.0)
-			{
-				newPos += glm::vec2(0.0, 1.0);
-				bodyObj->Direction = Heading::SOUTH;
-			}
-			else
-			{
-				newPos += glm::vec2(1, 0.0);
-
-				bodyObj->Position = newPos;
-
-				for (int k = 0; k < this->Level.Mushrooms.size(); k++)
-				{
-					GameObject* mushroom = &this->Level.Mushrooms[k];
-					if (CheckCollision(*bodyObj, *mushroom))
-					{
-						newPos += glm::vec2(-1.0, 1.0);
-						bodyObj->Direction = Heading::SOUTH;
-						bodyObj->LastTurnDownPosition = newPos;
-					}
-				}
-			}
-
-			bodyObj->Position = newPos;
-
-			lastObj = bodyObj;
-		}
-	}
 }
 
 void Game::ProcessInput(float dt)
@@ -212,7 +165,80 @@ void Game::ProcessInput(float dt)
 	}
 }
 
-glm::vec2 bodyPos = glm::vec2(16.0, 16.0);
+void Game::CentipedeTick()
+{
+	for (int i = 0; i < Centipedes.size(); i++)
+	{
+		std::vector<CentipedeObject>* centipede = &Centipedes[i];
+		CentipedeObject* lastObj = nullptr;
+		for (int j = 0; j < centipede->size(); j++)
+		{
+
+			int xDirectionInverter = 4;
+			int* i = &xDirectionInverter;
+
+			CentipedeObject* bodyObj = &(*centipede)[j];
+			if (bodyObj->CourseX == Heading::WEST)
+				*i = -4;
+
+
+			bodyObj->LastDirection = bodyObj->Direction;
+			bodyObj->Direction = bodyObj->CourseX;
+
+			glm::vec2 newPos = bodyObj->Position;
+			glm::vec2 initPos = bodyObj->Position;
+
+			if (bodyObj->LastTurnDownPosition.y > bodyObj->Position.y -16.0)
+			{
+				newPos += glm::vec2(0.0 * *i, 1.0);
+				bodyObj->Direction = Heading::SOUTH;
+			}
+			else
+			{
+				newPos += glm::vec2(1.0 * *i, 0.0);
+
+				bodyObj->Position = newPos;
+
+				if (CheckCollisionWalls(*bodyObj))
+				{
+					if (bodyObj->CourseX == Heading::WEST)
+						bodyObj->CourseX = Heading::EAST;
+					else
+						bodyObj->CourseX = Heading::WEST;
+
+					newPos += glm::vec2(-1.0 * *i, 0.0);
+					bodyObj->Direction = bodyObj->CourseX;
+					bodyObj->LastTurnDownPosition = newPos;
+					newPos += glm::vec2(0.0 * *i, 1.0);
+
+				}
+				else
+				{
+					for (int k = 0; k < this->Level.Mushrooms.size(); k++)
+					{
+						GameObject* mushroom = &this->Level.Mushrooms[k];
+						if (CheckCollision(*bodyObj, *mushroom))
+						{
+							if (bodyObj->CourseX == Heading::WEST)
+								bodyObj->CourseX = Heading::EAST;
+							else
+								bodyObj->CourseX = Heading::WEST;
+
+							newPos += glm::vec2(-1.0 * *i, 0.0);
+							bodyObj->Direction = Heading::SOUTH;
+							bodyObj->LastTurnDownPosition = newPos;
+							newPos += glm::vec2(0.0 * *i, 1.0);
+						}
+					}
+				}
+			}
+
+			bodyObj->Position = newPos;
+
+			lastObj = bodyObj;
+		}
+	}
+}
 
 void Game::Render()
 {
@@ -231,6 +257,28 @@ void Game::Render()
 	}
 }
 
+void Game::CentipedeDraw(SpriteRenderer& renderer)
+{
+	for (auto& centipede : Centipedes)
+	{
+		for (auto& bodyObj : centipede)
+		{
+			bodyObj.Draw(renderer);
+		}
+	}
+}
+
+bool Game::CheckCollisionWalls(GameObject& one)
+{
+	bool collisionX = one.Position.x + one.Size.x > this->Width || one.Position.x < 0;
+	bool collisionY = one.Position.y + one.Size.y > this->Height || one.Position.y < 0;
+
+	if (collisionX || collisionY)
+		std::cout << "collision with wall" << std::endl;
+
+	return collisionX || collisionY;
+}
+
 bool Game::CheckCollision(GameObject& one, GameObject& two)
 {
 	bool collisionX = one.Position.x + one.Size.x > two.Position.x && two.Position.x + two.Size.x > one.Position.x;
@@ -241,16 +289,16 @@ bool Game::CheckCollision(GameObject& one, GameObject& two)
 
 bool Game::CheckCollision(GameObject& one, glm::vec2& twoPos, glm::vec2& twoSize)
 {
-	bool collisionX = one.Position.x + one.Size.x >= twoPos.x && twoPos.x + twoSize.x >= one.Position.x;
-	bool collisionY = one.Position.y + one.Size.y >= twoPos.y && twoPos.y + twoSize.y >= one.Position.y;
+	bool collisionX = one.Position.x + one.Size.x > twoPos.x && twoPos.x + twoSize.x > one.Position.x;
+	bool collisionY = one.Position.y + one.Size.y > twoPos.y && twoPos.y + twoSize.y > one.Position.y;
 
 	return collisionX && collisionY;
 }
 
 bool Game::CheckCollision(glm::vec2& onePos, glm::vec2& oneSize, GameObject& two)
 {
-	bool collisionX = onePos.x + oneSize.x >= two.Position.x && two.Position.x + two.Size.x >= onePos.x;
-	bool collisionY = onePos.y + oneSize.y >= two.Position.y && two.Position.y + two.Size.y >= onePos.y;
+	bool collisionX = onePos.x + oneSize.x > two.Position.x && two.Position.x + two.Size.x > onePos.x;
+	bool collisionY = onePos.y + oneSize.y > two.Position.y && two.Position.y + two.Size.y > onePos.y;
 
 	return collisionX && collisionY;
 }
@@ -284,48 +332,7 @@ void Game::DoCollisions()
 			return;
 		}
 	}
-
-	
-
-	//Collision result = CheckCollision(*Bullet, *Player);
-	/*if (!Bullet->Stuck && std::get<0>(result))
-	{
-		// check where it hit the board, and change velocity based on where it hit the board
-		float centerBoard = Player->Position.x + Player->Size.x / 2.0f;
-		float distance = (Bullet->Position.x + Bullet->Size.x) - centerBoard;
-		float percentage = distance / (Player->Size.x / 2.0f);
-
-		// then move accordingly
-		float strength = 2.0f;
-		glm::vec2 oldVelocity = Bullet->Velocity;
-		Bullet->Velocity.x = BULLET_VELOCITY * percentage * strength;
-		Bullet->Velocity.y = -1.0f * abs(Bullet->Velocity.y);
-		Bullet->Velocity = glm::normalize(Bullet->Velocity) * glm::length(oldVelocity);
-	}*/
 }
-
-/*Direction Game::VectorDirection(glm::vec2 target)
-{
-	glm::vec2 compass[] = {
-		glm::vec2(0.0f, 1.0f),  // up
-		glm::vec2(1.0f, 0.0f),  // right
-		glm::vec2(0.0f, -1.0f), // down
-		glm::vec2(-1.0f, 0.0f)  // left
-	};
-
-	float max = 0.0f;
-	unsigned int best_match = -1;
-	for (unsigned int i = 0; i < 4; i++)
-	{
-		float dot_product = glm::dot(glm::normalize(target), compass[i]);
-		if (dot_product > max)
-		{
-			max = dot_product;
-			best_match = i;
-		}
-	}
-	return (Direction)best_match;
-}*/
 
 void Game::ResetLevel()
 {
@@ -340,13 +347,3 @@ void Game::ResetPlayer()
 	//Bullet->Reset(Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - Bullet->Size.x, -(Bullet->Size.x * 2.0f)), glm::vec2(BULLET_VELOCITY));
 }
 
-void Game::CentipedeDraw(SpriteRenderer& renderer)
-{
-	for (auto& centipede : Centipedes)
-	{
-		for (auto& bodyObj : centipede)
-		{
-			bodyObj.Draw(renderer);
-		}
-	}
-}

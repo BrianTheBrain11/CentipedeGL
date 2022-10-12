@@ -51,6 +51,7 @@ private:
 	bool CheckCollision(GameObject& one, GameObject& two);
 	bool CheckCollision(GameObject& one, glm::vec2& twoPos, glm::vec2& twoSize);
 	bool CheckCollision(glm::vec2& onePos, glm::vec2& oneSize, GameObject& two);
+	bool CheckCollisionWalls(GameObject& one);
 };
 
 #endif
