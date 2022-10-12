@@ -54,29 +54,45 @@ int main()
 
     Centipede.Init();
 
-    float deltaTime = 0.0f;
-    float lastFrame = 0.0f;
+    double deltaTime = 0.0;
+    double lastFrame = 0.0;
 
+    double lastSecond = 0;
+    int frameCount = 0;
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        float currentTime = glfwGetTime();
+        double currentTime = glfwGetTime();
         deltaTime = currentTime - lastFrame;
-        lastFrame = currentTime;
-        glfwPollEvents();
 
-        // user input
-        Centipede.ProcessInput(deltaTime);
+        if (deltaTime >= 1.0 / 200.0)
+        {
+            lastFrame = currentTime;
+            glfwPollEvents();
 
-        Centipede.Update(deltaTime);
+            // user input
+            Centipede.ProcessInput(deltaTime);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        Centipede.Render();
+            Centipede.Update(deltaTime);
 
-        glfwSwapBuffers(window);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+            Centipede.Render();
+
+            glfwSwapBuffers(window);
+
+
+            frameCount++;
+
+            if (currentTime - lastSecond >= 1)
+            {
+                std::cout << frameCount << std::endl;
+                frameCount = 0;
+                lastSecond = glfwGetTime();
+            }
+        }
     }
 
     ResourceManager::Clear();

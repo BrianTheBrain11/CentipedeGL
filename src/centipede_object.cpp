@@ -9,5 +9,5 @@ CentipedeObject::CentipedeObject(std::string name, glm::vec2 pos, glm::vec2 size
 
 void CentipedeObject::Draw(SpriteRenderer& renderer)
 {
-	renderer.DrawSprite(this->textureMap[0], this->Position, this->Size, this->Rotation, this->Color);
+	renderer.DrawSprite(this->textureMap[0], this->Position, this->Size, (float)this->Direction, this->Color);
 }

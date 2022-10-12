@@ -74,19 +74,23 @@ void Game::CentipedeInit(int bodyLength)
 {
 	std::vector<CentipedeObject> centipede;
 	std::vector<Texture2D> centipedeTextures = ResourceManager::GetTextures("centipede_body");
-	CentipedeObject prevBody("centipede_body", glm::vec2(240.0, 16.0), glm::vec2(16.0, 16.0), 0, centipedeTextures, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0));
+	CentipedeObject prevBody("centipede_body", glm::vec2(240.0, 32.0), glm::vec2(16.0, 16.0), 0, centipedeTextures, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0));
+	prevBody.head = true;
+	prevBody.Course = Heading::EAST;
 	std::cout << prevBody.textureMap.size() << " debug size" << std::endl;
 	centipede.push_back(prevBody);
 	for (int i = 1; i < bodyLength; i++)
 	{
-		CentipedeObject newBody = CentipedeObject("centipede_body", glm::vec2(240.0 + 16.0*i, 16.0), glm::vec2(16.0), 0, centipedeTextures, glm::vec3(1.0f), glm::vec3(0.0));
+		CentipedeObject newBody = CentipedeObject("centipede_body", glm::vec2(240.0 + 16.0*i, 32.0), glm::vec2(16.0), 0, centipedeTextures, glm::vec3(1.0f), glm::vec3(0.0));
 		centipede.push_back(newBody);
+		newBody.Course = Heading::EAST;
 	}
 	Centipedes.push_back(centipede);
 }
 
 void Game::Update(float dt)
 {
+	CentipedeTick();
 	if (Bullet != nullptr)
 		Bullet->Move(dt, this->Width);
 
@@ -99,6 +103,54 @@ void Game::Update(float dt)
 		{
 			this->ResetLevel();
 			this->ResetPlayer();
+		}
+	}
+
+}
+
+void Game::CentipedeTick()
+{
+	for (int i = 0; i < Centipedes.size(); i++)
+	{
+		std::vector<CentipedeObject>* centipede = &Centipedes[i];
+		CentipedeObject* lastObj = nullptr;
+		for (int j = 0; j < centipede->size(); j++)
+		{
+			CentipedeObject* bodyObj = &(*centipede)[j];
+
+			bodyObj->LastDirection = bodyObj->Direction;
+			bodyObj->Direction = bodyObj->Course;
+
+			glm::vec2 newPos = bodyObj->Position;
+			glm::vec2 initPos = bodyObj->Position;
+
+
+			if (bodyObj->LastTurnDownPosition.y >= bodyObj->Position.y -16.0)
+			{
+				newPos += glm::vec2(0.0, 1.0);
+				bodyObj->Direction = Heading::SOUTH;
+			}
+			else
+			{
+				newPos += glm::vec2(1, 0.0);
+
+				bodyObj->Position = newPos;
+
+				for (int k = 0; k < this->Level.Mushrooms.size(); k++)
+				{
+					GameObject* mushroom = &this->Level.Mushrooms[k];
+					if (CheckCollision(*bodyObj, *mushroom))
+					{
+						newPos += glm::vec2(-1.0, 1.0);
+						bodyObj->Direction = Heading::SOUTH;
+						bodyObj->LastTurnDownPosition = newPos;
+					}
+				}
+			}
+
+			bodyObj->Position = newPos;
+
+			lastObj = bodyObj;
 		}
 	}
 }
@@ -166,29 +218,23 @@ void Game::Render()
 {
 	if (this->State == GAME_ACTIVE) {
 
-		// 60 fps limit
-		if (glfwGetTime() - lastTime >= (1 / 60))
-		{
-			// draw background
-			Texture2D backgroundTexture = ResourceManager::GetTexture("background");
-			Renderer->DrawSprite(backgroundTexture, glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
+		// draw background
+		Texture2D backgroundTexture = ResourceManager::GetTexture("background");
+		Renderer->DrawSprite(backgroundTexture, glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
 
-			// draw level
-			CentipedeDraw(*Renderer);
-			Level.Draw(*Renderer);
-			Player->Draw(*Renderer);
-			if (Bullet != nullptr)
-				Bullet->Draw(*Renderer);
-
-			lastTime = glfwGetTime();
-		}
+		// draw level
+		CentipedeDraw(*Renderer);
+		Level.Draw(*Renderer);
+		Player->Draw(*Renderer);
+		if (Bullet != nullptr)
+			Bullet->Draw(*Renderer);
 	}
 }
 
 bool Game::CheckCollision(GameObject& one, GameObject& two)
 {
-	bool collisionX = one.Position.x + one.Size.x >= two.Position.x && two.Position.x + two.Size.x >= one.Position.x;
-	bool collisionY = one.Position.y + one.Size.y >= two.Position.y && two.Position.y + two.Size.y >= one.Position.y;
+	bool collisionX = one.Position.x + one.Size.x > two.Position.x && two.Position.x + two.Size.x > one.Position.x;
+	bool collisionY = one.Position.y + one.Size.y > two.Position.y && two.Position.y + two.Size.y > one.Position.y;
 
 	return collisionX && collisionY;
 }
@@ -258,7 +304,7 @@ void Game::DoCollisions()
 	}*/
 }
 
-Direction Game::VectorDirection(glm::vec2 target)
+/*Direction Game::VectorDirection(glm::vec2 target)
 {
 	glm::vec2 compass[] = {
 		glm::vec2(0.0f, 1.0f),  // up
@@ -279,7 +325,7 @@ Direction Game::VectorDirection(glm::vec2 target)
 		}
 	}
 	return (Direction)best_match;
-}
+}*/
 
 void Game::ResetLevel()
 {

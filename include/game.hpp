@@ -19,15 +19,6 @@ enum GameState {
 	GAME_WIN
 };
 
-enum Direction {
-	UP,
-	RIGHT,
-	DOWN, 
-	LEFT
-};
-
-typedef std::tuple<bool, Direction, glm::vec2> Collision;
-
 class Game
 {
 public:
@@ -46,6 +37,7 @@ public:
 	void CentipedeInit(int bodyLength);
 	void ProcessInput(float dt);
 	void Update(float dt);
+	void CentipedeTick();
 	void Render();
 	void CentipedeDraw(SpriteRenderer& renderer);
 	void DoCollisions();
@@ -56,7 +48,6 @@ private:
 	//bool CheckCollision(GameObject& one, GameObject& two);
 	//bool CheckCollision(BallObject& one, GameObject& two);
 
-	Direction VectorDirection(glm::vec2 target);
 	bool CheckCollision(GameObject& one, GameObject& two);
 	bool CheckCollision(GameObject& one, glm::vec2& twoPos, glm::vec2& twoSize);
 	bool CheckCollision(glm::vec2& onePos, glm::vec2& oneSize, GameObject& two);
