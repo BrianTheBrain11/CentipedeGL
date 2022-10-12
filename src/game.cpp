@@ -174,12 +174,12 @@ void Game::CentipedeTick()
 		for (int j = 0; j < centipede->size(); j++)
 		{
 
-			int xDirectionInverter = 4;
+			int xDirectionInverter = 1;
 			int* i = &xDirectionInverter;
 
 			CentipedeObject* bodyObj = &(*centipede)[j];
 			if (bodyObj->CourseX == Heading::WEST)
-				*i = -4;
+				*i = -1;
 
 
 			bodyObj->LastDirection = bodyObj->Direction;
