@@ -23,7 +23,7 @@ const float PLAYER_VELOCITY(500.0f);
 GameObject* Player;
 
 const glm::vec2 BULLET_SIZE(8.0f, 16.0f);
-const glm::vec2 BULLET_VELOCITY(0.0f, 4000.0f);
+const glm::vec2 BULLET_VELOCITY(0.0f, 2000.0f);
 BulletObject* Bullet;
 glm::vec2 bodyPos = glm::vec2(16.0, 16.0);
 
@@ -68,7 +68,7 @@ void Game::Init()
 	Texture2D playerTexture = ResourceManager::GetTexture("player");
 	Player = new GameObject("player", playerPos, PLAYER_SIZE, playerTexture);
 
-	CentipedeInit(5);
+	CentipedeInit(25);
 }
 
 void Game::CentipedeInit(int bodyLength)
@@ -96,16 +96,16 @@ void Game::Update(float dt)
 		Bullet->Move(dt, this->Width);
 
 	this->DoCollisions();
+}
 
-	if (Bullet != nullptr)
+void Game::ProcessBullet()
+{
+	if (this->Keys[GLFW_KEY_SPACE] == 1 && Bullet == nullptr)
 	{
-		if (Bullet->Position.y >= this->Height) // did ball reach bottom edge?
-		{
-			this->ResetLevel();
-			this->ResetPlayer();
-		}
+		glm::vec2 bulletPos = Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - BULLET_SIZE.x, -BULLET_SIZE.x * 2.0f);
+		Texture2D bulletTexture = ResourceManager::GetTexture("bullet");
+		Bullet = new BulletObject("bullet", bulletPos, glm::vec2(8, 16), BULLET_VELOCITY, bulletTexture);
 	}
-
 }
 
 void Game::ProcessInput(float dt)
@@ -155,13 +155,6 @@ void Game::ProcessInput(float dt)
 		}
 
 		Player->Position = newPos;	
-
-		if (this->Keys[GLFW_KEY_SPACE] == 1 && Bullet == nullptr)
-		{
-			glm::vec2 bulletPos = Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - BULLET_SIZE.x, -BULLET_SIZE.x * 2.0f);
-			Texture2D bulletTexture = ResourceManager::GetTexture("bullet");
-			Bullet = new BulletObject("bullet", bulletPos, glm::vec2(8, 16), BULLET_VELOCITY, bulletTexture);
-		}
 	}
 }
 
@@ -322,6 +315,39 @@ void Game::DoCollisions()
 				delete Bullet;
 				Bullet = nullptr;
 				return;
+			}
+		}
+
+		for (int i = 0; i < this->Centipedes.size(); i++)
+		{
+			std::vector<CentipedeObject>* centipede = &this->Centipedes[i];
+			for (int j = 0; j < centipede->size(); j++)
+			{
+				CentipedeObject* bodyObj = &(*centipede)[j];
+
+				if (CheckCollision(*Bullet, *bodyObj))
+				{
+					//clamp position down to 16 x 16 grid
+					glm::vec2 pos(((int)bodyObj->Position.x - ((int)bodyObj->Position.x % 16)), ((int)bodyObj->Position.y - ((int)bodyObj->Position.y % 16)));
+
+
+					glm::vec2 size(16, 16);
+					std::vector<Texture2D> objTexture = ResourceManager::GetTextures("mushroom");
+					GameObject obj("mushroom", pos, size, 0, objTexture, glm::vec3(1.0f, 1.0f, 1.0f));
+					obj.AnimationState = 0;
+					obj.IsSolid = true;
+					obj.Destroyed = false;
+					std::cout << ResourceManager::GetTextures("mushroom").size() << " is full size" << std::endl;
+					
+					this->Level.Mushrooms.push_back(obj);
+					
+					centipede->erase(centipede->begin() + j);
+
+					std::cout << Level.Mushrooms.size() << std::endl;
+					delete Bullet;
+					Bullet = nullptr;
+					return;
+				}
 			}
 		}
 		

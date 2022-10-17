@@ -55,25 +55,6 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData,
                 std::cout << ResourceManager::GetTextures("mushroom").size() << " is full size" << std::endl;
                 this->Mushrooms.push_back(obj);
             }
-
-            /*else if (tileData[y][x] > 1)
-            {
-                glm::vec3 color = glm::vec3(1.0f); // original: white
-                if (tileData[y][x] == 2)
-                    color = glm::vec3(0.2f, 0.6f, 1.0f);
-                else if (tileData[y][x] == 3)
-                    color = glm::vec3(0.0f, 0.7f, 0.0f);
-                else if (tileData[y][x] == 4)
-                    color = glm::vec3(0.8f, 0.8f, 0.4f);
-                else if (tileData[y][x] == 5)
-                    color = glm::vec3(1.0f, 0.5f, 0.0f);
-
-                glm::vec2 pos(unit_width * x, unit_height * y);
-                glm::vec2 size(unit_width, unit_height);
-                this->Mushrooms.push_back(
-                    GameObject(pos, size, ResourceManager::GetTexture("block"), color)
-                );
-            }*/
         }
     }
 }

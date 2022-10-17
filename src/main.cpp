@@ -35,6 +35,7 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(0);
     glfwSetKeyCallback(window, key_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -54,9 +55,10 @@ int main()
 
     Centipede.Init();
 
-    double deltaTime = 0.0;
+    double deltaTimeGameLogic = 0.0;
+    double deltaTimeBulletLogic = 0.0;
     double lastFrame = 0.0;
-
+    double lastBulletProcess = 0.0;
     double lastSecond = 0;
     int frameCount = 0;
 
@@ -65,17 +67,23 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         double currentTime = glfwGetTime();
-        deltaTime = currentTime - lastFrame;
+        deltaTimeGameLogic = currentTime - lastFrame;
+        deltaTimeBulletLogic = currentTime - lastBulletProcess;
 
-        if (deltaTime >= 1.0 / 60.0)
+        if (deltaTimeBulletLogic >= 1.0/400.0)
+        {
+            Centipede.ProcessBullet();
+        }
+
+        if (deltaTimeGameLogic >= 1.0 / 60.0)
         {
             lastFrame = currentTime;
             glfwPollEvents();
 
             // user input
-            Centipede.ProcessInput(deltaTime);
+            Centipede.ProcessInput(deltaTimeGameLogic);
 
-            Centipede.Update(deltaTime);
+            Centipede.Update(deltaTimeGameLogic);
 
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);

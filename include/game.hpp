@@ -33,16 +33,17 @@ public:
 	Game(unsigned int width, unsigned int height);
 	~Game();
 
-	void Init();
+	void Init(void);
 	void CentipedeInit(int bodyLength);
 	void ProcessInput(float dt);
+	void ProcessBullet();
 	void Update(float dt);
-	void CentipedeTick();
-	void Render();
+	void CentipedeTick(void);
+	void Render(void);
 	void CentipedeDraw(SpriteRenderer& renderer);
-	void DoCollisions();
-	void ResetLevel();
-	void ResetPlayer();
+	void DoCollisions(void);
+	void ResetLevel(void);
+	void ResetPlayer(void);
 
 private:
 	//bool CheckCollision(GameObject& one, GameObject& two);

@@ -960,10 +960,6 @@
   <ItemGroup>
     <None Include="shaders\sprite.vert" />
     <None Include="shaders\sprite.frag" />
-    <None Include="levels\one.lvl" />
-    <None Include="levels\two.lvl" />
-    <None Include="levels\three.lvl" />
-    <None Include="levels\four.lvl" />
     <None Include="include\glm\detail\func_common.inl">
       <Filter>Header Files</Filter>
     </None>
