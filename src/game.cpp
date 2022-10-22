@@ -29,6 +29,9 @@ glm::vec2 bodyPos = glm::vec2(16.0, 16.0);
 
 void Game::Init()
 {
+	// init score sector
+	this->GameScore = Score(0);
+
 	// load shader
 	ResourceManager::LoadShader("shaders/sprite.vert", "shaders/sprite.frag", nullptr, "sprite");
 
@@ -58,6 +61,9 @@ void Game::Init()
 
 	// load centipede textures
 	ResourceManager::LoadTexturesFromSpriteMap("sprites/Centipede_Body.png", true, "centipede_body", 16, 16);
+
+	// load number font
+	ResourceManager::LoadTexturesFromSpriteMap("sprites/Numbers.png", true, "numbers", 16, 16);
 
 	// load starting level
 	this->Level.Load("levels/starting_level.lvl", this->Width, this->Height);
@@ -96,6 +102,8 @@ void Game::Update(float dt)
 		Bullet->Move(dt, this->Width);
 
 	this->DoCollisions();
+
+	this->GameScore.Update();
 }
 
 void Game::ProcessBullet()
@@ -154,7 +162,7 @@ void Game::ProcessInput(float dt)
 			}
 		}
 
-		Player->Position = newPos;	
+		Player->Position = newPos;
 	}
 }
 
@@ -247,6 +255,8 @@ void Game::Render()
 		Player->Draw(*Renderer);
 		if (Bullet != nullptr)
 			Bullet->Draw(*Renderer);
+
+		this->GameScore.Draw(*Renderer);
 	}
 }
 
@@ -265,9 +275,6 @@ bool Game::CheckCollisionWalls(GameObject& one)
 {
 	bool collisionX = one.Position.x + one.Size.x > this->Width || one.Position.x < 0;
 	bool collisionY = one.Position.y + one.Size.y > this->Height || one.Position.y < 0;
-
-	if (collisionX || collisionY)
-		std::cout << "collision with wall" << std::endl;
 
 	return collisionX || collisionY;
 }
@@ -305,6 +312,7 @@ void Game::DoCollisions()
 			GameObject* mushroom = &this->Level.Mushrooms[i];
 			if (CheckCollision(*Bullet, *mushroom))
 			{
+				this->GameScore.Points++;
 				mushroom->AnimationState++;
 				if (mushroom->AnimationState > mushroom->textureMap.size() - 1)
 				{
@@ -327,7 +335,11 @@ void Game::DoCollisions()
 
 				if (CheckCollision(*Bullet, *bodyObj))
 				{
-					//clamp position down to 16 x 16 grid
+					if (bodyObj->head)
+						this->GameScore.Points += 100;
+					else
+						this->GameScore.Points += 10;
+					//clamp position down to 16 x 16
 					glm::vec2 pos(((int)bodyObj->Position.x - ((int)bodyObj->Position.x % 16)), ((int)bodyObj->Position.y - ((int)bodyObj->Position.y % 16)));
 
 

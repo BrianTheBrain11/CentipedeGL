@@ -60,6 +60,9 @@
     <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\score.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
@@ -956,6 +959,9 @@
     <ClInclude Include="include\centipede_object.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\score.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\sprite.vert" />
@@ -1373,10 +1379,10 @@
     <None Include="Piskel\Player.piskel" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="lib\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
     <Image Include="sprites\background.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="sprites\block.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="sprites\block_solid.png">
@@ -1388,14 +1394,17 @@
     <Image Include="sprites\Player.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="sprites\Numbers.png">
+      <Filter>Resource Files</Filter>
+    </Image>
     <Image Include="sprites\Mushroom.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="sprites\Bullet.png">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\glfw3.lib" />
+    <Image Include="sprites\block.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

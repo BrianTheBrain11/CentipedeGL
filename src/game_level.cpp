@@ -46,13 +46,12 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData,
         {
             if (tileData[y][x] == 1)
             {
-                glm::vec2 pos(unit_width * x, unit_height * y);
+                glm::vec2 pos(unit_width * x, unit_height * y + 16);
                 glm::vec2 size(unit_width, unit_height);
                 std::vector<Texture2D> objTexture = ResourceManager::GetTextures("mushroom");
                 GameObject obj("mushroom", pos, size, 0, objTexture, glm::vec3(1.0f, 1.0f, 1.0f));
                 obj.AnimationState = 0;
                 obj.IsSolid = true;
-                std::cout << ResourceManager::GetTextures("mushroom").size() << " is full size" << std::endl;
                 this->Mushrooms.push_back(obj);
             }
         }

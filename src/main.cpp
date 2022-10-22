@@ -11,7 +11,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 // settings
 const unsigned int SCR_WIDTH = 480;
-const unsigned int SCR_HEIGHT = 640;
+const unsigned int SCR_HEIGHT = 656;
 
 Game Centipede(SCR_WIDTH, SCR_HEIGHT);
 

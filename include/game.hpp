@@ -3,15 +3,16 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <vector>
 #include <map>
 
-#include <glm/glm.hpp>
 #include "game_level.hpp"
 #include "game_object.hpp"
 #include "bullet_object.hpp"
 #include "centipede_object.hpp"
+#include "score.hpp"
 
 enum GameState {
 	GAME_ACTIVE,
@@ -24,6 +25,7 @@ class Game
 public:
 	GameState State;
 	GameLevel Level;
+	Score GameScore;
 	std::map<int, int> Keys;
 	unsigned int Width, Height;
 	double lastTime;
@@ -46,9 +48,6 @@ public:
 	void ResetPlayer(void);
 
 private:
-	//bool CheckCollision(GameObject& one, GameObject& two);
-	//bool CheckCollision(BallObject& one, GameObject& two);
-
 	bool CheckCollision(GameObject& one, GameObject& two);
 	bool CheckCollision(GameObject& one, glm::vec2& twoPos, glm::vec2& twoSize);
 	bool CheckCollision(glm::vec2& onePos, glm::vec2& oneSize, GameObject& two);
