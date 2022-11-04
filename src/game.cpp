@@ -54,7 +54,7 @@ void Game::Init()
 	ResourceManager::LoadTexture("sprites/Bullet.png", true, "bullet");
 
 	// load mushrooms
-	ResourceManager::LoadTexturesFromSpriteMap("sprites/Mushroom.png", true, "mushroom", 16, 16);
+	ResourceManager::LoadTexturesFromSpriteMap("sprites/MushroomGreyscale.png", true, "mushroom", 16, 16);
 
 	// load Player
 	ResourceManager::LoadTexture("sprites/Player.png", true, "player");
@@ -84,20 +84,49 @@ void Game::CentipedeInit(int bodyLength)
 	CentipedeObject prevBody("centipede_body", glm::vec2(240.0, 32.0), glm::vec2(16.0, 16.0), 0, centipedeTextures, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0));
 	prevBody.head = true;
 	prevBody.CourseX = Heading::EAST;
-	std::cout << prevBody.textureMap.size() << " debug size" << std::endl;
+	prevBody.Speed = 1;
 	centipede.push_back(prevBody);
 	for (int i = 1; i < bodyLength; i++)
 	{
 		CentipedeObject newBody = CentipedeObject("centipede_body", glm::vec2(240.0 + 16.0*i, 32.0), glm::vec2(16.0), 0, centipedeTextures, glm::vec3(1.0f), glm::vec3(0.0));
-		centipede.push_back(newBody);
 		newBody.CourseX = Heading::EAST;
+		newBody.Speed = 1;
+		centipede.push_back(newBody);
+
 	}
 	Centipedes.push_back(centipede);
+
+	std::vector<CentipedeObject> centipede2;
+	CentipedeObject prevBody2("centipede_body", glm::vec2(240.0, 32.0), glm::vec2(16.0, 16.0), 0, centipedeTextures, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0));
+	prevBody2.head = true;
+	prevBody2.CourseX = Heading::EAST;
+	prevBody2.Speed = 2;
+	centipede2.push_back(prevBody);
+	for (int i = 1; i < bodyLength; i++)
+	{
+		CentipedeObject newBody = CentipedeObject("centipede_body", glm::vec2(240.0 + 16.0 * i, 32.0), glm::vec2(16.0), 0, centipedeTextures, glm::vec3(1.0f), glm::vec3(0.0));
+		newBody.CourseX = Heading::EAST;
+		newBody.Speed = 2;
+		centipede2.push_back(newBody);
+
+	}
+	Centipedes.push_back(centipede2);
 }
+
+bool frameHalfer = true;
 
 void Game::Update(float dt)
 {
-	CentipedeTick();
+	if (frameHalfer)
+	{
+		CentipedeTick(1);
+		frameHalfer = false;
+	}
+	else
+	{
+		CentipedeTick(2);
+		frameHalfer = true;
+	}
 	if (Bullet != nullptr)
 		Bullet->Move(dt, this->Width);
 
@@ -166,77 +195,84 @@ void Game::ProcessInput(float dt)
 	}
 }
 
-void Game::CentipedeTick()
+void Game::CentipedeTick(int speedSelection)
 {
+	int clearedCentipedes = 0;
+
 	for (int i = 0; i < Centipedes.size(); i++)
 	{
 		std::vector<CentipedeObject>* centipede = &Centipedes[i];
+		if (centipede->size() == 0)
+			clearedCentipedes++;
 		CentipedeObject* lastObj = nullptr;
 		for (int j = 0; j < centipede->size(); j++)
 		{
-
 			int xDirectionInverter = 1;
 			int* i = &xDirectionInverter;
 
 			CentipedeObject* bodyObj = &(*centipede)[j];
+
 			if (bodyObj->CourseX == Heading::WEST)
 				*i = -1;
 
-
-			bodyObj->LastDirection = bodyObj->Direction;
-			bodyObj->Direction = bodyObj->CourseX;
-
-			glm::vec2 newPos = bodyObj->Position;
-			glm::vec2 initPos = bodyObj->Position;
-
-			if (bodyObj->LastTurnDownPosition.y > bodyObj->Position.y -16.0)
+			if (speedSelection <= bodyObj->Speed)
 			{
-				newPos += glm::vec2(0.0 * *i, 1.0);
-				bodyObj->Direction = Heading::SOUTH;
-			}
-			else
-			{
-				newPos += glm::vec2(1.0 * *i, 0.0);
 
-				bodyObj->Position = newPos;
+				bodyObj->LastDirection = bodyObj->Direction;
+				bodyObj->Direction = bodyObj->CourseX;
 
-				if (CheckCollisionWalls(*bodyObj))
+				glm::vec2 newPos = bodyObj->Position;
+				glm::vec2 initPos = bodyObj->Position;
+
+				if (bodyObj->LastTurnDownPosition.y > bodyObj->Position.y - 16.0)
 				{
-					if (bodyObj->CourseX == Heading::WEST)
-						bodyObj->CourseX = Heading::EAST;
-					else
-						bodyObj->CourseX = Heading::WEST;
-
-					newPos += glm::vec2(-1.0 * *i, 0.0);
-					bodyObj->Direction = bodyObj->CourseX;
-					bodyObj->LastTurnDownPosition = newPos;
 					newPos += glm::vec2(0.0 * *i, 1.0);
-
+					bodyObj->Direction = Heading::SOUTH;
 				}
 				else
 				{
-					for (int k = 0; k < this->Level.Mushrooms.size(); k++)
-					{
-						GameObject* mushroom = &this->Level.Mushrooms[k];
-						if (CheckCollision(*bodyObj, *mushroom))
-						{
-							if (bodyObj->CourseX == Heading::WEST)
-								bodyObj->CourseX = Heading::EAST;
-							else
-								bodyObj->CourseX = Heading::WEST;
+					newPos += glm::vec2(1.0 * *i, 0.0);
 
-							newPos += glm::vec2(-1.0 * *i, 0.0);
-							bodyObj->Direction = Heading::SOUTH;
-							bodyObj->LastTurnDownPosition = newPos;
-							newPos += glm::vec2(0.0 * *i, 1.0);
+					bodyObj->Position = newPos;
+
+					if (CheckCollisionWalls(*bodyObj))
+					{
+						if (bodyObj->CourseX == Heading::WEST)
+							bodyObj->CourseX = Heading::EAST;
+						else
+							bodyObj->CourseX = Heading::WEST;
+
+						newPos += glm::vec2(-1.0 * *i, 0.0);
+						bodyObj->Direction = bodyObj->CourseX;
+						bodyObj->LastTurnDownPosition = newPos;
+						newPos += glm::vec2(0.0 * *i, 1.0);
+
+					}
+					else
+					{
+						for (int k = 0; k < this->Level.Mushrooms.size(); k++)
+						{
+							GameObject* mushroom = &this->Level.Mushrooms[k];
+							if (CheckCollision(*bodyObj, *mushroom))
+							{
+								if (bodyObj->CourseX == Heading::WEST)
+									bodyObj->CourseX = Heading::EAST;
+								else
+									bodyObj->CourseX = Heading::WEST;
+
+								newPos += glm::vec2(-1.0 * *i, 0.0);
+								bodyObj->Direction = Heading::SOUTH;
+								bodyObj->LastTurnDownPosition = newPos;
+								newPos += glm::vec2(0.0 * *i, 1.0);
+							}
 						}
 					}
 				}
+
+				bodyObj->Position = newPos;
+
+				lastObj = bodyObj;
 			}
-
-			bodyObj->Position = newPos;
-
-			lastObj = bodyObj;
 		}
 	}
 }

@@ -601,6 +601,7 @@
     <None Include="levels\starting_level.lvl" />
     <None Include="Piskel\Centipede_Body.piskel" />
     <None Include="Piskel\Player.piskel" />
+    <None Include="shaders\colored_levels.frag" />
     <None Include="shaders\sprite.frag" />
     <None Include="shaders\sprite.vert" />
   </ItemGroup>

@@ -1377,6 +1377,7 @@
     <None Include="levels\starting_level.lvl" />
     <None Include="Piskel\Centipede_Body.piskel" />
     <None Include="Piskel\Player.piskel" />
+    <None Include="shaders\colored_levels.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glfw3.lib" />

@@ -16,6 +16,7 @@ class CentipedeObject : public GameObject {
 public:
 	CentipedeObject(std::string name, glm::vec2 pos, glm::vec2 size, int animationState, std::vector<Texture2D> textureMap, glm::vec3 color, glm::vec2 velocity);
 
+	int Speed;
 	bool head;
 	void Draw(SpriteRenderer& renderer);
 	Heading CourseX;

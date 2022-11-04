@@ -40,7 +40,7 @@ public:
 	void ProcessInput(float dt);
 	void ProcessBullet();
 	void Update(float dt);
-	void CentipedeTick(void);
+	void CentipedeTick(int speedSelection);
 	void Render(void);
 	void CentipedeDraw(SpriteRenderer& renderer);
 	void DoCollisions(void);

@@ -75,7 +75,7 @@ int main()
             Centipede.ProcessBullet();
         }
 
-        if (deltaTimeGameLogic >= 1.0 / 60.0)
+        if (deltaTimeGameLogic >= 1.0 / 240.0)
         {
             lastFrame = currentTime;
             glfwPollEvents();
